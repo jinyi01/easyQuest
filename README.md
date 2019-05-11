@@ -3,9 +3,9 @@
 Easily check application statuses on quest using Python requests.
 
 ### Prerequisites
-Python 3  
-Requests  
-Beautiful Soup
+- Python 3  
+- Requests  
+- Beautiful Soup
 
 ## Setup
 Save login creditials in config.json
