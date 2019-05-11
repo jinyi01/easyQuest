@@ -14,6 +14,9 @@ class Application:
         self.s.headers.update(
             {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"})
 
+        # program information
+        self.programs = []
+
         # login
         payload = {
             "j_username": username,
@@ -38,7 +41,6 @@ class Application:
         r = self.s.post(
             "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/s/WEBLIB_PTBR.ISCRIPT1.FieldFormula.IScript_StartPage", data=payload)
 
-    def get_appstatus(self):
         # get application page
         r = self.s.get(
             "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL?&ICAGTarget=start")
@@ -49,11 +51,11 @@ class Application:
         programshtml = appsoup.find_all(
             "span", {"title": "Enrollment Appointments"})
 
-        programs = []
         for program in programshtml:
             programhtml = program.find("a")
             # get program icaction and name
-            programs.append([programhtml.get("id"), programhtml.get_text()])
+            self.programs.append({"Program": programhtml.get_text(),
+                                  "ICAction": programhtml.get("id")})
 
         inputs = appsoup.find(
             "div", {"id": "win0divPSHIDDENFIELDS"}).find_all("input")
@@ -65,10 +67,9 @@ class Application:
         for fieldinput in inputs:
             form[fieldinput.get("id")] = fieldinput.get("value")
 
-        appstatus = {}
-
-        for program in programs:
-            form["ICAction"] = program[0]
+        # get program application link
+        for ind, program in enumerate(self.programs):
+            form["ICAction"] = program["ICAction"]
             r = self.s.post(
                 "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL", data=form)
             applinkpage = bsoup(r.content, "lxml-xml")
@@ -79,13 +80,22 @@ class Application:
             # get iframe link
             applink = applink.replace(
                 "https://quest.pecs.uwaterloo.ca/psp", "https://quest.pecs.uwaterloo.ca/psc")
+            self.programs[ind]["Link"] = applink
 
-            r = self.s.get(applink)
+    def get_appstatus(self):
+        appstatus = {}
+        for program in self.programs:
+            r = self.s.get(program["Link"])
             appstatuspage = bsoup(r.content, "lxml")
             status = appstatuspage.find("a", {"name": "STATUS$0"}).get_text()
-            appstatus[program[1]] = status
+            appstatus[program["Program"]] = status
 
         return appstatus
+
+    def reset_timeout(self):
+        # resets Quest's timeout
+        self.s.get(
+            "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/?cmd=resettimeout")
 
 
 if __name__ == '__main__':
