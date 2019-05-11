@@ -14,3 +14,7 @@ Returns a dictionary
     "Program": "Status"
 }
 ```
+Since Quest times out, the timer can be reset.
+```
+a.reset_timeout()
+```
