@@ -1,6 +1,6 @@
 # easyQuest
 
-Tool to easily check application status on quest.
+Tool to easily check application statuses on quest.
 
 Save login creditials in config.json
 
