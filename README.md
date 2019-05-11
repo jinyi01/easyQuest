@@ -21,10 +21,8 @@ Returns a dictionary
     "Program": "Status"
 }
 ```
-<<<<<<< HEAD
 Since Quest times out, the timer can be reset.
 ```
 a.reset_timeout()
 ```
-=======
->>>>>>> 2534a5bce57711eeae33dec7fb8068ab49049538
+
