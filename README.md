@@ -1,6 +1,6 @@
 # easyQuest
 
-Tool to easily check application statuses on quest.
+Easily check application statuses on quest using Python requests.
 
 ### Prerequisites
 Python 3  
