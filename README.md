@@ -3,6 +3,7 @@
 Tool to easily check application statuses on quest.
 
 ### Prerequisites
+Python 3
 Requests  
 Beautiful Soup
 
